@@ -90,7 +90,7 @@ bun run check        # lint + typecheck + production build + tests
 
 `main.js` is a CommonJS bundle with `obsidian` externalized; no Node APIs are used at runtime. UI uses native Obsidian components and theme variables, without a web framework. The in-memory metadata index is updated incrementally; queries scan the notes and their locations. Core parsing, frontmatter rules, and queries are host-independent. `processFrontMatter()` owns YAML updates; a per-file queue serializes captures, and duplicate/invalid callbacks abort before serialization.
 
-CI runs linting and typechecking as separate checks, tests on Linux/Windows/macOS, and a production build gated on all of them. It uploads the three installable files. The tagged-release workflow reuses these same checks and artifacts, then creates a **draft** GitHub release with notes extracted from [CHANGELOG.md](CHANGELOG.md), not an uncurated commit list. Only the release job has repository write permission. No release has been published by this implementation.
+CI runs linting and typechecking as separate checks, tests on Linux/Windows/macOS, and a production build gated on all of them. It uploads the three installable files. The tagged-release workflow reuses these same checks and artifacts, then creates a **draft** GitHub release with notes extracted from [CHANGELOG.md](CHANGELOG.md), not an uncurated commit list. Only the release job has repository write permission.
 
 ### Changelog and releases
 

@@ -30,5 +30,5 @@ Version headings must match the plugin version and release tag exactly.
 
 ### Known limitations
 
-- Android/iOS GPS hardware and permission flows still require real-device acceptance testing before publication.
+- Android/iOS GPS hardware and permission flows have not yet been verified on real devices. This initial release is a prerelease for testing, not a claim of verified mobile integration.
 - Maps, geocoding, automatic migrations, and bulk metadata repair are intentionally not included.
