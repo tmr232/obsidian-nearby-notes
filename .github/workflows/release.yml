@@ -1,0 +1,31 @@
+name: Draft release
+on:
+  push:
+    tags: ["[0-9]*"]
+permissions:
+  contents: read
+jobs:
+  checks:
+    uses: ./.github/workflows/check.yml
+  release:
+    needs: checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.10
+      - uses: actions/download-artifact@v4
+        with:
+          name: nearby-notes
+      - name: Verify tag and generate notes from changelog
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: bun run release:notes "$RELEASE_TAG" > release-notes.md
+      - name: Create draft with installable files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: gh release create "$RELEASE_TAG" main.js manifest.json styles.css --draft --verify-tag --title "$RELEASE_TAG" --notes-file release-notes.md
