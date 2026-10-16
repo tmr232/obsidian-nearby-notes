@@ -50,4 +50,6 @@ Use a backed-up or disposable vault and Obsidian 1.11+. Record the app version, 
 - [ ] `bun install --frozen-lockfile && bun run check` succeeds.
 - [ ] Install only main.js, manifest.json, styles.css into a clean vault.
 - [ ] Review manifest/version/tag compatibility and privacy documentation.
+- [ ] Confirm the release has individual main.js, manifest.json, and styles.css attachments and changelog-derived notes.
+- [ ] Verify each downloaded asset with `gh attestation verify`, enforcing the repository, release workflow, and expected tag as described in README.md.
 - [ ] Complete real mobile GPS checks above before declaring mobile integration verified.

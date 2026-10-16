@@ -90,7 +90,7 @@ bun run check        # lint + typecheck + production build + tests
 
 `main.js` is a CommonJS bundle with `obsidian` externalized; no Node APIs are used at runtime. UI uses native Obsidian components and theme variables, without a web framework. The in-memory metadata index is updated incrementally; queries scan the notes and their locations. Core parsing, frontmatter rules, and queries are host-independent. `processFrontMatter()` owns YAML updates; a per-file queue serializes captures, and duplicate/invalid callbacks abort before serialization.
 
-CI runs linting and typechecking as separate checks, tests on Linux/Windows/macOS, and a production build gated on all of them. It uploads the three installable files. The tagged-release workflow reuses these same checks and artifacts, then creates a **draft** GitHub release with notes extracted from [CHANGELOG.md](CHANGELOG.md), not an uncurated commit list. Only the release job has repository write permission.
+CI runs linting and typechecking as separate checks, tests on Linux/Windows/macOS, and a production build gated on all of them. It uploads the three installable files. The tagged-release workflow reuses these same checks and artifacts, generates signed build provenance for all three files with `actions/attest`, then creates a **draft** GitHub release with notes extracted from [CHANGELOG.md](CHANGELOG.md), not an uncurated commit list. Repository write, OIDC, and attestation permissions are scoped to the release job; branch/PR checks remain read-only.
 
 ### Changelog and releases
 
@@ -99,12 +99,28 @@ CI runs linting and typechecking as separate checks, tests on Linux/Windows/macO
 3. Set the same version in `package.json` and `manifest.json`. Add that version and its `minAppVersion` to `versions.json` for **every** release.
 4. Run `bun run check`, complete the device acceptance checks, and preview notes with `bun run release:notes 1.1.0`.
 5. Commit the release preparation, then push a tag named **exactly** `1.1.0` (no `v` prefix). The tag must point at that prepared commit. The workflow rejects mismatched versions, missing compatibility records, missing/duplicate changelog entries, and empty or undated notes.
-6. Review the draft release's notes and its `main.js`, `manifest.json`, and `styles.css` attachments, then publish it manually.
+6. Review the draft release's notes and its individual `main.js`, `manifest.json`, and `styles.css` attachments. Verify their attestations before publishing manually. Mark testing releases as prereleases until device acceptance is complete.
 
 Do not move published tags or rewrite released changelog entries; prepare a new patch release instead. A failed run before draft creation can be rerun; if a draft already exists, review it rather than overwriting it blindly. Branch CI runs only read-only checks; local checks never publish anything.
+
+Release packaging follows Obsidian's [GitHub Actions release guide](https://docs.obsidian.md/Plugins/Releasing/Release+your+plugin+with+GitHub+Actions) and [submission guide](https://docs.obsidian.md/plugins/releasing/submit-plugin): the numeric `x.y.z` tag exactly matches the manifest, and the three installable files are attached individually, not just as a source archive. The public repository includes its source, README, LICENSE, and manifest. Publishing a GitHub release does **not** submit the plugin to the community directory; that is a separate process.
+
+### Verify release provenance
+
+Using GitHub CLI, download a release and verify each file against this repository's release workflow and the expected tag:
+
+```sh
+gh release download 1.0.1 --repo tmr232/obsidian-nearby-notes --dir release-assets
+for file in main.js manifest.json styles.css; do
+  gh attestation verify "release-assets/$file" \
+    --repo tmr232/obsidian-nearby-notes \
+    --signer-workflow tmr232/obsidian-nearby-notes/.github/workflows/release.yml \
+    --source-ref refs/tags/1.0.1
+done
+```
 
 ### Verification status
 
 Automated tests cover schema integrity, precision/range parsing, duplicate boundaries, concurrent updates, target retention across note switches, unload safety, queries and sorting, GPS errors/age/accuracy/timeouts, settings validation, and live index changes. Desktop host checks use a disposable Linux Obsidian vault; simulated fixes test GPS-dependent behavior, **not real GPS hardware or permissions**.
 
-Before publishing, run the [device acceptance checklist](docs/acceptance.md) on Android and iOS. Native mobile permission prompts, offline GPS behavior, real sync providers, and Windows/macOS remain device/manual checks, not claims made by the unit tests.
+Before promoting a testing prerelease to a stable release, complete the [device acceptance checklist](docs/acceptance.md) on Android and iOS. Native mobile permission prompts, offline GPS behavior, real sync providers, and Windows/macOS remain device/manual checks, not claims made by the unit tests.
