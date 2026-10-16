@@ -8,6 +8,26 @@ Version headings must match the plugin version and release tag exactly.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-16
+
+First published prerelease. Version 1.0.0 remains an unpublished packaging draft.
+
+### Added
+
+- Mobile location capture with duplicate-safe frontmatter history and original-location preservation.
+- Distance-sorted nearby-note browsing with GPS or note references, search, distance filters, and collapsed-by-default controls.
+- Offline desktop browsing relative to a note, live metadata updates, and configurable units and property names.
+
+### Security
+
+- Signed GitHub build provenance for each installable asset: `main.js`, `manifest.json`, and `styles.css`, following Obsidian's release guidance.
+- No plugin network requests, telemetry, background tracking, or startup GPS requests.
+
+### Known limitations
+
+- Android/iOS GPS hardware and permission flows have not yet been verified on real devices. This prerelease is for testing, not a claim of verified mobile integration.
+- The plugin has not been submitted to Obsidian's community directory. Install the three release assets manually for now.
+
 ## [1.0.0] - 2026-10-16
 
 ### Added

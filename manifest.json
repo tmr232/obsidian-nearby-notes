@@ -1,7 +1,7 @@
 {
 	"id": "nearby-notes",
 	"name": "Nearby Notes",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "1.11.0",
 	"description": "Record locations in your notes and discover nearby notes, entirely offline.",
 	"author": "tmr232",
